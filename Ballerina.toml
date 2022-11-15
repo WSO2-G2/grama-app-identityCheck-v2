@@ -1,0 +1,9 @@
+[build-options]
+  observabilityIncluded = true
+
+[package]
+  distribution = "2201.1.2"
+  name = "grama_app_identitycheckapi"
+  org = "wso2g2"
+  version = "0.1.0"
+
