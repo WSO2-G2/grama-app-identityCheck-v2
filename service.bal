@@ -14,9 +14,15 @@ type person record {
 # bound to port `9090`.
 service / on new http:Listener(9090) {
 
-    resource function get getPerson(string nic) returns person|error? {
+    resource function get getPerson(string nic) returns boolean {
 
-        person queryRowResponse = check mysqlEp->queryRow(sqlQuery = `SELECT * FROM person WHERE nic = ${nic}`);
-        return queryRowResponse;
+        person|error queryRowResponse =  mysqlEp->queryRow(sqlQuery = `SELECT * FROM person WHERE nic = ${nic}`);
+        
+        if(queryRowResponse is error){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 }
