@@ -25,7 +25,7 @@ service / on new http:Listener(9090) {
         }
 
         if(queryRowResponse is error){
-            return false;
+            return queryRowResponse;
         }
         else{
             return true;
