@@ -15,7 +15,7 @@ type person record {
 # test
 service / on new http:Listener(9090) {
 
-    resource function get checkId(string nic) returns boolean|error? {
+    isolated resource function get checkId(string nic) returns boolean|error? {
         mysql:Client mysqlEp = check new (host = "workzone.c6yaihe9lzwl.us-west-2.rds.amazonaws.com", user = "admin", password = "Malithi1234", database = "gramaIdentityCheck", port = 3306);
         
         person|error queryRowResponse =  mysqlEp->queryRow(sqlQuery = `SELECT * FROM person WHERE nic = ${nic}`);
