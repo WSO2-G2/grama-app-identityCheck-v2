@@ -12,6 +12,7 @@ type person record {
 
 # A service representing a network-accessible API
 # bound to port `9090`.
+# test
 service / on new http:Listener(9090) {
 
     resource function get checkId(string nic) returns boolean|error? {
