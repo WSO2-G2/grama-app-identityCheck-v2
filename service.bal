@@ -14,23 +14,38 @@ type person record {
 # test
 service / on new http:Listener(9090) {
 
-    isolated resource function get checkId(string nic) returns boolean|error? {
+    isolated resource function get checkId(string nic) returns json|error? {
         mysql:Client mysqlEp = check new (host = "workzone.c6yaihe9lzwl.us-west-2.rds.amazonaws.com", user = "admin", password = "Malithi1234", database = "gramaIdentityCheck", port = 3306);
 
         person|error queryRowResponse = mysqlEp->queryRow(sqlQuery = `SELECT * FROM person WHERE nic = ${nic}`);
 
         error? e = mysqlEp.close();
 
+        boolean result;
+
         if (e is error) {
             return e;
         }
+        
+    // return response;
 
         if (queryRowResponse is error) {
-            return false;
+            result = false;
         }
         else {
-            return true;
+            result = true;
         }
+
+        json response = {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Headers" : "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        },
+        body: result.toJsonString()
+    };
+        return response;
     }
 
     resource function post addRecord(@http:Payload person payload) returns sql:ExecutionResult|error? {
