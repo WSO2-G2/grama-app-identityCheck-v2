@@ -3,6 +3,12 @@ import ballerinax/mysql.driver as _;
 import ballerina/http;
 import ballerina/sql;
 
+configurable int PORT = ?;
+configurable string DB = ?;
+configurable string PASSWORD = ?;
+configurable string USER = ?;
+configurable string HOST = ?;
+
 type person record {
     int userId;
     string nic;
@@ -15,7 +21,7 @@ type person record {
 service / on new http:Listener(9090) {
 
     isolated resource function get checkId(string nic) returns json|error? {
-        mysql:Client mysqlEp = check new (host = "workzone.c6yaihe9lzwl.us-west-2.rds.amazonaws.com", user = "admin", password = "Malithi1234", database = "gramaIdentityCheck", port = 3306);
+        mysql:Client mysqlEp = check new (host = HOST, user = USER, password = PASSWORD, database = DB, port = PORT);
 
         person|error queryRowResponse = mysqlEp->queryRow(sqlQuery = `SELECT * FROM person WHERE nic = ${nic}`);
 
@@ -26,8 +32,8 @@ service / on new http:Listener(9090) {
         if (e is error) {
             return e;
         }
-        
-    // return response;
+
+        // return response;
 
         if (queryRowResponse is error) {
             result = false;
@@ -37,21 +43,21 @@ service / on new http:Listener(9090) {
         }
 
         json response = {
-        statusCode: 200,
-        headers: {
-            "Access-Control-Allow-Headers" : "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-        },
-        body: result.toJsonString()
-    };
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Headers": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+            },
+            body: result.toJsonString()
+        };
         return response;
     }
 
     resource function post addRecord(@http:Payload person payload) returns sql:ExecutionResult|error? {
 
-        mysql:Client mysqlEp1 = check new (host = "workzone.c6yaihe9lzwl.us-west-2.rds.amazonaws.com", user = "admin", password = "Malithi1234", database = "gramaIdentityCheck", port = 3306);
-        
+        mysql:Client mysqlEp1 = check new (host = HOST, user = USER, password = PASSWORD, database = DB, port = PORT);
+
         sql:ExecutionResult executeResponse = check mysqlEp1->execute(sqlQuery = `INSERT INTO person(nic,name) VALUES (${payload.nic}, ${payload.name})`);
         error? e = mysqlEp1.close();
         if (e is error) {
