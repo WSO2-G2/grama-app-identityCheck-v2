@@ -65,4 +65,16 @@ service / on new http:Listener(9090) {
         }
         return executeResponse;
     }
+    
+    resource function get getdetails(string nic) returns person|error? {
+        mysql:Client mysqlEp = check new (host = HOST, user = USER, password = PASSWORD, database = DB, port = PORT);
+
+        person|error queryRowResponse = mysqlEp->queryRow(sqlQuery = `SELECT * FROM person WHERE nic = ${nic}`);
+        error? e = mysqlEp.close();
+        if (e is error) {
+            return e;
+        }
+        return queryRowResponse;
+
+    }
 }
